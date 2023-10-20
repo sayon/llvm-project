@@ -85,6 +85,9 @@ StringRef Triple::getArchTypeName(ArchType Kind) {
   case x86_64:         return "x86_64";
   case xcore:          return "xcore";
   case xtensa:         return "xtensa";
+    // BEGIN BOGUS
+  case bogus:          return "bogus";
+    // END BOGUS
   }
 
   llvm_unreachable("Invalid ArchType!");
@@ -177,6 +180,9 @@ StringRef Triple::getArchTypePrefix(ArchType Kind) {
   case dxil:        return "dx";
 
   case xtensa:      return "xtensa";
+    // BEGIN BOGUS
+  case bogus:      return "bogus";
+    // END BOGUS
   }
 }
 
@@ -394,6 +400,9 @@ Triple::ArchType Triple::getArchTypeForLLVMName(StringRef Name) {
     .Case("loongarch64", loongarch64)
     .Case("dxil", dxil)
     .Case("xtensa", xtensa)
+    // BEGIN BOGUS
+    .Case("bogus", bogus)
+    // END BOGUS
     .Default(UnknownArch);
 }
 
@@ -538,6 +547,9 @@ static Triple::ArchType parseArch(StringRef ArchName) {
     .Case("loongarch64", Triple::loongarch64)
     .Case("dxil", Triple::dxil)
     .Case("xtensa", Triple::xtensa)
+    // BEGIN BOGUS
+    .Case("bogus", Triple::bogus)
+    // END BOGUS
     .Default(Triple::UnknownArch);
 
   // Some architectures require special parsing logic just to compute the
@@ -873,6 +885,10 @@ static Triple::ObjectFormatType getDefaultFormat(const Triple &T) {
 
   case Triple::dxil:
     return Triple::DXContainer;
+    // BEGIN BOGUS
+  case Triple::bogus:
+    return Triple::ELF;
+    // END BOGUS
   }
   llvm_unreachable("unknown architecture");
 }
@@ -1457,6 +1473,9 @@ static unsigned getArchPointerBitWidth(llvm::Triple::ArchType Arch) {
   case llvm::Triple::ve:
   case llvm::Triple::wasm64:
   case llvm::Triple::x86_64:
+    // BEGIN BOGUS
+  case llvm::Triple::bogus:
+    // END BOGUS
     return 64;
   }
   llvm_unreachable("Invalid architecture value");
@@ -1551,6 +1570,10 @@ Triple Triple::get32BitArchVariant() const {
     break;
   case Triple::wasm64:         T.setArch(Triple::wasm32);  break;
   case Triple::x86_64:         T.setArch(Triple::x86);     break;
+
+    // BEGIN BOGUS
+  case Triple::bogus: T.setArch(Triple::bogus); break;
+    // END BOGUS
   }
   return T;
 }
@@ -1601,6 +1624,10 @@ Triple Triple::get64BitArchVariant() const {
   case Triple::ve:
   case Triple::wasm64:
   case Triple::x86_64:
+    // BEGIN BOGUS
+  case Triple::bogus:
+    // END BOGUS
+
     // Already 64-bit.
     break;
 

@@ -20,6 +20,9 @@
 #include "Targets/AVR.h"
 #include "Targets/BPF.h"
 #include "Targets/CSKY.h"
+// BEGIN BOGUS
+#include "Targets/Bogus.h"
+// END BOGUS
 #include "Targets/DirectX.h"
 #include "Targets/Hexagon.h"
 #include "Targets/Lanai.h"
@@ -747,6 +750,10 @@ std::unique_ptr<TargetInfo> AllocateTarget(const llvm::Triple &Triple,
     default:
         return std::make_unique<LoongArch32TargetInfo>(Triple, Opts);
     }
+    // BEGIN BOGUS
+  case llvm::Triple::bogus:
+    return std::make_unique<BogusTargetInfo>(Triple, Opts);
+    // END BOGUS
   case llvm::Triple::loongarch64:
     switch (os) {
     case llvm::Triple::Linux:

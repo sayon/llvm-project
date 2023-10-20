@@ -7,7 +7,7 @@ set(LLVM_LINK_COMPONENTS
   Support
   TargetParser
   WindowsDriver
-  )
+)
 
 if(WIN32)
   # MSVCToolChain.cpp uses version.dll.
@@ -46,6 +46,9 @@ add_clang_library(clangDriver
   ToolChains/AMDGPUOpenMP.cpp
   ToolChains/AVR.cpp
   ToolChains/BareMetal.cpp
+  # BEGIN BOGUS
+  ToolChains/Bogus.cpp
+  # END BOGUS
   ToolChains/Clang.cpp
   ToolChains/CommonArgs.cpp
   ToolChains/CrossWindows.cpp

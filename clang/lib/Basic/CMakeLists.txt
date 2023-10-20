@@ -94,6 +94,9 @@ add_clang_library(clangBasic
   Targets/ARC.cpp
   Targets/ARM.cpp
   Targets/AVR.cpp
+  # BEGIN BOGUS
+  Targets/Bogus.cpp
+  # END BOGUS
   Targets/BPF.cpp
   Targets/CSKY.cpp
   Targets/DirectX.cpp

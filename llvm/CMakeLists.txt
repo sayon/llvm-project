@@ -445,6 +445,7 @@ set(LLVM_ALL_TARGETS
   ARM
   AVR
   BPF
+  Bogus
   Hexagon
   Lanai
   LoongArch
@@ -468,6 +469,7 @@ set(LLVM_ALL_EXPERIMENTAL_TARGETS
   M68k
   SPIRV
   Xtensa
+  Bogus
 )
 
 # List of targets with JIT support:
