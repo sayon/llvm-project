@@ -1,16 +1,3 @@
-//===-- BogusInstrInfo.cpp - Bogus Instruction Information ----------------===//
-//
-//                     The LLVM Compiler Infrastructure
-//
-// This file is distributed under the University of Illinois Open Source
-// License. See LICENSE.TXT for details.
-//
-//===----------------------------------------------------------------------===//
-//
-// This file contains the Bogus implementation of the TargetInstrInfo class.
-//
-//===----------------------------------------------------------------------===//
-
 #include "BogusInstrInfo.h"
 
 #include "BogusTargetMachine.h"
@@ -29,7 +16,6 @@ using namespace llvm;
 #include "BogusGenInstrInfo.inc"
 
 BogusInstrInfo::BogusInstrInfo(const BogusSubtarget &STI)
-    : BogusGenInstrInfo(Bogus::ADJCALLSTACKDOWN, Bogus::ADJCALLSTACKUP),
-      Subtarget(STI)
+  : BogusGenInstrInfo(), Subtarget(STI)
 {
 }

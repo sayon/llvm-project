@@ -79,7 +79,6 @@ private:
 
   SDValue LowerCall(TargetLowering::CallLoweringInfo &CLI,
                     SmallVectorImpl<SDValue> &InVals) const override;
-  void HandleByVal(CCState *, unsigned &, Align) const override;
   SDValue LowerCallResult(SDValue Chain, SDValue InFlag,
                           CallingConv::ID CallConv, bool IsVarArg,
                           const SmallVectorImpl<ISD::InputArg> &Ins,
@@ -90,6 +89,9 @@ private:
                            SDValue Arg, const SDLoc &dl,
                            SelectionDAG &DAG, const CCValAssign &VA,
                            ISD::ArgFlagsTy Flags) const;
+  SDValue LowerShlParts(SDValue Op, SelectionDAG &DAG) const;
+  SDValue LowerShrParts(SDValue Op, SelectionDAG &DAG, bool Arith) const;
+
 };
 }
 

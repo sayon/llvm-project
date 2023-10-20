@@ -29,25 +29,19 @@ extern "C" LLVM_EXTERNAL_VISIBILITY void LLVMInitializeBogusTarget() {
 }
 
 static std::string computeDataLayout() {
-  std::string Ret = "";
-
+  std::string Ret =
   // Little endian
-  Ret += "e";
-
+  "e"
   // ELF name mangling
-  Ret += "-m:e";
-
+  "-m:e"
   // 32-bit pointers, 32-bit aligned
-  Ret += "-p:32:32";
-
+  "-p:32:32"
   // 64-bit integers, 64 bit aligned
-  Ret += "-i64:64";
-
+  "-i64:64"
   // 32-bit native integer width i.e register are 32-bit
-  Ret += "-n32";
-
+  "-n32"
   // 128-bit natural stack alignment
-  Ret += "-S128";
+  "-S128";
 
   return Ret;
 }

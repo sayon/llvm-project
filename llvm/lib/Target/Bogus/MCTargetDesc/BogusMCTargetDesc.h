@@ -1,18 +1,6 @@
-//===-- BogusMCTargetDesc.h - Bogus Target Descriptions ---------*- C++ -*-===//
-//
-//                     The LLVM Compiler Infrastructure
-//
-// This file is distributed under the University of Illinois Open Source
-// License. See LICENSE.TXT for details.
-//
-//===----------------------------------------------------------------------===//
-//
-// This file provides Bogus specific target descriptions.
-//
-//===----------------------------------------------------------------------===//
+#pragma once
 
-#ifndef LLVM_LIB_TARGET_Bogus_MCTARGETDESC_BogusMCTARGETDESC_H
-#define LLVM_LIB_TARGET_Bogus_MCTARGETDESC_BogusMCTARGETDESC_H
+#include "BogusBaseInfo.h"
 
 // Defines symbolic names for Bogus registers. This defines a mapping from
 // register name to register number.
@@ -25,5 +13,3 @@
 
 #define GET_SUBTARGETINFO_ENUM
 #include "BogusGenSubtargetInfo.inc"
-
-#endif // end LLVM_LIB_TARGET_Bogus_MCTARGETDESC_BogusMCTARGETDESC_H

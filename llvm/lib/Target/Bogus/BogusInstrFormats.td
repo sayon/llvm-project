@@ -1,14 +1,3 @@
-//=== BogusInstrFormats.td - Bogus Instruction Formats -----*- tablegen -*-===//
-//
-//                     The LLVM Compiler Infrastructure
-//
-// This file is distributed under the University of Illinois Open Source
-// License. See LICENSE.TXT for details.
-//
-//===----------------------------------------------------------------------===//
-
-//===----------------------------------------------------------------------===//
-//
 //  These instruction format definitions are structured to match the
 //  description in the RISC-V User-Level ISA specification as closely as
 //  possible. For instance, the specification describes instructions with the
@@ -140,6 +129,34 @@ class RWInstI<bits<3> funct3, BogusOpcode opcode, dag outs, dag ins,
   let Inst{31-20} = imm12;
   let Inst{19-15} = rs1;
   let Inst{14-12} = funct3;
+  let Inst{11-7} = rd;
+  let Opcode = opcode.Value;
+}
+
+class RWInstIShift<bit arithshift, bits<3> funct3, BogusOpcode opcode,
+                   dag outs, dag ins, string opcodestr, string argstr>
+    : RWInst<outs, ins, opcodestr, argstr, [], InstFormatI> {
+  bits<6> shamt;
+  bits<5> rs1;
+  bits<5> rd;
+
+  let Inst{31} = 0;
+  let Inst{30} = arithshift;
+  let Inst{29-26} = 0;
+  let Inst{25-20} = shamt;
+  let Inst{19-15} = rs1;
+  let Inst{14-12} = funct3;
+  let Inst{11-7} = rd;
+  let Opcode = opcode.Value;
+}
+
+class RWInstU<BogusOpcode opcode, dag outs, dag ins, string opcodestr,
+              string argstr>
+    : RWInst<outs, ins, opcodestr, argstr, [], InstFormatU> {
+  bits<20> imm20;
+  bits<5> rd;
+
+  let Inst{31-12} = imm20;
   let Inst{11-7} = rd;
   let Opcode = opcode.Value;
 }

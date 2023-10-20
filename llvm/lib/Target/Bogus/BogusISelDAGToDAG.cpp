@@ -27,8 +27,6 @@ bool BogusDAGToDAGISel::runOnMachineFunction(MachineFunction &MF) {
 }
 
 void BogusDAGToDAGISel::Select(SDNode *Node) {
-  unsigned Opcode = Node->getOpcode();
-
   // If we have a custom node, we already have selected!
   if (Node->isMachineOpcode()) {
     LLVM_DEBUG(errs() << "== "; Node->dump(CurDAG); errs() << "\n");
@@ -36,12 +34,23 @@ void BogusDAGToDAGISel::Select(SDNode *Node) {
     return;
   }
 
-  // Instruction Selection not handled by the auto-generated tablegen selection
-  // should be handled here.
-  switch(Opcode) {
-  default: break;
-  }
+  unsigned Opcode = Node->getOpcode();
+  SDLoc DL(Node);
 
+  switch (Opcode) {
+  case ISD::Constant: {
+    auto* ConstNode = cast<ConstantSDNode>(Node);
+    if (ConstNode) {
+      SDValue New = CurDAG->getCopyFromReg(CurDAG->getEntryNode(), SDLoc(Node),
+                                           Bogus::X0, MVT::i32);
+      ReplaceNode(Node, New.getNode());
+      return;
+    }
+    break;
+  }
+  default:
+    break;
+  }
   // Select the default instruction
   SelectCode(Node);
 }

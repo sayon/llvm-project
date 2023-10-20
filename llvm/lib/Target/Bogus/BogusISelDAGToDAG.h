@@ -11,9 +11,7 @@
 //
 //===----------------------------------------------------------------------===//
 
-#ifndef LLVM_LIB_TARGET_Bogus_BogusISELDAGTODAG_H
-#define LLVM_LIB_TARGET_Bogus_BogusISELDAGTODAG_H
-
+#pragma once
 #include "BogusSubtarget.h"
 #include "BogusTargetMachine.h"
 #include "llvm/CodeGen/MachineFunction.h"
@@ -43,5 +41,3 @@ private:
   const BogusSubtarget *Subtarget;
 };
 } // namespace llvm
-
-#endif // end LLVM_LIB_TARGET_Bogus_BogusISELDAGTODAG_H
