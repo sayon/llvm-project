@@ -44,15 +44,14 @@ def InstFormatOther  : InstFormat<17>;
 class BogusOpcode<bits<7> val> {
   bits<7> Value = val;
 }
-def OPC_LOAD      : BogusOpcode<0b0000011>;
-def OPC_LOAD_FP   : BogusOpcode<0b0000111>;
-def OPC_MISC_MEM  : BogusOpcode<0b0001111>;
+//def OPC_LOAD_FP   : BogusOpcode<0b0000111>;
+//def OPC_MISC_MEM  : BogusOpcode<0b0001111>;
 def OPC_OP_IMM    : BogusOpcode<0b0010011>;
 def OPC_AUIPC     : BogusOpcode<0b0010111>;
-def OPC_OP_IMM_32 : BogusOpcode<0b0011011>;
-def OPC_STORE     : BogusOpcode<0b0100011>;
-def OPC_STORE_FP  : BogusOpcode<0b0100111>;
-def OPC_AMO       : BogusOpcode<0b0101111>;
+///def OPC_OP_IMM_32 : BogusOpcode<0b0011011>;
+//def OPC_STORE     : BogusOpcode<0b0100011>;
+//def OPC_STORE_FP  : BogusOpcode<0b0100111>;
+//def OPC_AMO       : BogusOpcode<0b0101111>;
 def OPC_OP        : BogusOpcode<0b0110011>;
 def OPC_LUI       : BogusOpcode<0b0110111>;
 def OPC_OP_32     : BogusOpcode<0b0111011>;
@@ -62,9 +61,11 @@ def OPC_NMSUB     : BogusOpcode<0b1001011>;
 def OPC_NMADD     : BogusOpcode<0b1001111>;
 def OPC_OP_FP     : BogusOpcode<0b1010011>;
 def OPC_BRANCH    : BogusOpcode<0b1100011>;
-def OPC_JALR      : BogusOpcode<0b1100111>;
+
+def OPC_JALR      : BogusOpcode< !add(0b1100000, !shl(0b11, 1)) >;
 def OPC_JAL       : BogusOpcode<0b1101111>;
 def OPC_SYSTEM    : BogusOpcode<0b1110011>;
+
 
 class RWInst<dag outs, dag ins, string opcodestr, string argstr,
              list<dag> pattern, InstFormat format>

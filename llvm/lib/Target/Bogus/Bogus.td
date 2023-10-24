@@ -17,10 +17,13 @@ def BogusInstrInfo : InstrInfo;
 
 def : ProcessorModel<"generic",  NoSchedModel, []>;
 
-//===----------------------------------------------------------------------===//
-// Bogus Target declaration
-//===----------------------------------------------------------------------===//
+def BogusAsmWriter : AsmWriter {
+  string AsmWriterClassName = "InstPrinter";
+  bit isMCAsmWriter = 1;
+}
 
 def Bogus : Target {
   let InstructionSet = BogusInstrInfo;
+  let AssemblyWriters = [BogusAsmWriter];
+
 }

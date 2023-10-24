@@ -152,49 +152,11 @@ def AUIPC : RWInstU<OPC_AUIPC, (outs GPR:$rd), (ins uimm20_auipc:$imm20),
                     "auipc", "$rd, $imm20">, Sched<[WriteIALU]>;
 } // hasSideEffects = 0, mayLoad = 0, mayStore = 0
 
-// ADDI isn't always rematerializable, but isReMaterializable will be used as
-// a hint which is verified in isReallyTriviallyReMaterializable.
-let isReMaterializable = 1, isAsCheapAsAMove = 1 in
 def ADDI  : ALU_ri<0b000, "addi">;
-
-def SLTI  : ALU_ri<0b010, "slti">;
-def SLTIU : ALU_ri<0b011, "sltiu">;
-
-let isReMaterializable = 1, isAsCheapAsAMove = 1 in {
-def XORI  : ALU_ri<0b100, "xori">;
-def ORI   : ALU_ri<0b110, "ori">;
-}
 
 def ANDI  : ALU_ri<0b111, "andi">;
 
-def SLLI : Shift_ri<0, 0b001, "slli">;
-def SRLI : Shift_ri<0, 0b101, "srli">;
-def SRAI : Shift_ri<1, 0b101, "srai">;
-
 def ADD  : ALU_rr<0b0000000, 0b000, "add">, Sched<[WriteIALU, ReadIALU, ReadIALU]>;
-def SUB  : ALU_rr<0b0100000, 0b000, "sub">, Sched<[WriteIALU, ReadIALU, ReadIALU]>;
-def SLL  : ALU_rr<0b0000000, 0b001, "sll">, Sched<[WriteIALU, ReadIALU, ReadIALU]>;
-def SLT  : ALU_rr<0b0000000, 0b010, "slt">, Sched<[WriteIALU, ReadIALU, ReadIALU]>;
-def SLTU : ALU_rr<0b0000000, 0b011, "sltu">, Sched<[WriteIALU, ReadIALU, ReadIALU]>;
-def XOR  : ALU_rr<0b0000000, 0b100, "xor">, Sched<[WriteIALU, ReadIALU, ReadIALU]>;
-def SRL  : ALU_rr<0b0000000, 0b101, "srl">, Sched<[WriteIALU, ReadIALU, ReadIALU]>;
-def SRA  : ALU_rr<0b0100000, 0b101, "sra">, Sched<[WriteIALU, ReadIALU, ReadIALU]>;
-def OR   : ALU_rr<0b0000000, 0b110, "or">, Sched<[WriteIALU, ReadIALU, ReadIALU]>;
-def AND  : ALU_rr<0b0000000, 0b111, "and">, Sched<[WriteIALU, ReadIALU, ReadIALU]>;
-
-// M extension
-def MUL     : ALU_rr<0b0000001, 0b000, "mul">, Sched<[WriteIMul, ReadIMul, ReadIMul]>;
-def MULH    : ALU_rr<0b0000001, 0b001, "mulh">, Sched<[WriteIMul, ReadIMul, ReadIMul]>;
-def MULHSU  : ALU_rr<0b0000001, 0b010, "mulhsu">, Sched<[WriteIMul, ReadIMul, ReadIMul]>;
-def MULHU   : ALU_rr<0b0000001, 0b011, "mulhu">, Sched<[WriteIMul, ReadIMul, ReadIMul]>;
-def DIV     : ALU_rr<0b0000001, 0b100, "div">,
-              Sched<[WriteIDiv, ReadIDiv, ReadIDiv]>;
-def DIVU    : ALU_rr<0b0000001, 0b101, "divu">,
-              Sched<[WriteIDiv, ReadIDiv, ReadIDiv]>;
-def REM     : ALU_rr<0b0000001, 0b110, "rem">,
-              Sched<[WriteIDiv, ReadIDiv, ReadIDiv]>;
-def REMU    : ALU_rr<0b0000001, 0b111, "remu">,
-              Sched<[WriteIDiv, ReadIDiv, ReadIDiv]>;
 
 /* Procedure calling instructions */
 let hasSideEffects = 0, mayLoad = 0, mayStore = 0 in {
@@ -212,31 +174,9 @@ def JALR : RWInstI<0b000, OPC_JALR, (outs GPR:$rd),
 let isReturn = 1, isBarrier = 1, isTerminator = 1 in
 def PseudoRET : Pseudo<(outs), (ins), [(bogus_ret)]>,
                 PseudoInstExpansion<(JALR X0, X1, 0)>;
+// def : InstAlias<"ret",                   (JALR      X0,      X1, 0), 4>;
 
-def : InstAlias<"mv $rd, $rs",   (ADDI GPR:$rd, GPR:$rs,       0)>;
-def : InstAlias<"not $rd, $rs",  (XORI GPR:$rd, GPR:$rs,      -1)>;
-def : InstAlias<"neg $rd, $rs",  (SUB  GPR:$rd,      X0, GPR:$rs)>;
-
-def : InstAlias<"seqz $rd, $rs", (SLTIU GPR:$rd, GPR:$rs,       1)>;
-def : InstAlias<"snez $rd, $rs", (SLTU  GPR:$rd,      X0, GPR:$rs)>;
-def : InstAlias<"sltz $rd, $rs", (SLT   GPR:$rd, GPR:$rs,      X0)>;
-def : InstAlias<"sgtz $rd, $rs", (SLT   GPR:$rd,      X0, GPR:$rs)>;
-
-// sgt/sgtu are recognised by the GNU assembler but the canonical slt/sltu
-// form will always be printed. Therefore, set a zero weight.
-def : InstAlias<"sgt $rd, $rs, $rt", (SLT GPR:$rd, GPR:$rt, GPR:$rs), 0>;
-def : InstAlias<"sgtu $rd, $rs, $rt", (SLTU GPR:$rd, GPR:$rt, GPR:$rs), 0>;
-
-let EmitPriority = 0 in {
-def : InstAlias<"slt $rd, $rs1, $imm12",
-                (SLTI  GPR:$rd, GPR:$rs1, simm12:$imm12)>;
-def : InstAlias<"sltu $rd, $rs1, $imm12",
-                (SLTIU  GPR:$rd, GPR:$rs1, simm12:$imm12)>;
-}
-
-def : InstAlias<"ret",                   (JALR      X0,      X1, 0), 4>;
-
-def : MnemonicAlias<"move", "mv">;
+// def : MnemonicAlias<"move", "mv">;
 
 //===----------------------------------------------------------------------===//
 // Pseudo-instructions and codegen patterns
@@ -252,56 +192,13 @@ class PatGprGpr<SDPatternOperator OpNode, RWInst Inst>
     : Pat<(OpNode GPR:$rs1, GPR:$rs2), (Inst GPR:$rs1, GPR:$rs2)>;
 class PatGprSimm12<SDPatternOperator OpNode, RWInstI Inst>
     : Pat<(OpNode GPR:$rs1, simm12:$imm12), (Inst GPR:$rs1, simm12:$imm12)>;
-class PatGprUimmLog2WSize<SDPatternOperator OpNode, RWInstIShift Inst>
-    : Pat<(OpNode GPR:$rs1, uimmlog2wsize:$shamt),
-          (Inst GPR:$rs1, uimmlog2wsize:$shamt)>;
 
 /// Immediates
 
 def : Pat<(simm12:$imm), (ADDI X0, simm12:$imm)>;
-def : Pat<(simm32hi20:$imm), (LUI (HI20 imm:$imm))>;
 def : Pat<(simm32:$imm), (ADDI (LUI (HI20 imm:$imm)), (LO12Sext imm:$imm))>;
 
 /// Simple arithmetic operations
 
 def : PatGprGpr<add, ADD>;
 def : PatGprSimm12<add, ADDI>;
-def : PatGprGpr<sub, SUB>;
-def : PatGprGpr<or, OR>;
-def : PatGprSimm12<or, ORI>;
-def : PatGprGpr<and, AND>;
-def : PatGprSimm12<and, ANDI>;
-def : PatGprGpr<xor, XOR>;
-def : PatGprSimm12<xor, XORI>;
-def : PatGprUimmLog2WSize<shl, SLLI>;
-def : PatGprUimmLog2WSize<srl, SRLI>;
-def : PatGprUimmLog2WSize<sra, SRAI>;
-
-def : PatGprGpr<mul, MUL>;
-def : PatGprGpr<mulhs, MULH>;
-def : PatGprGpr<mulhu, MULHU>;
-// No ISDOpcode for mulhsu
-def : PatGprGpr<sdiv, DIV>;
-def : PatGprGpr<udiv, DIVU>;
-def : PatGprGpr<srem, REM>;
-def : PatGprGpr<urem, REMU>;
-
-// Match both a plain shift and one where the shift amount is masked (this is
-// typically introduced when the legalizer promotes the shift amount and
-// zero-extends it). For RISC-V, the mask is unnecessary as shifts in the base
-// ISA only read the least significant 5 bits (RV32I) or 6 bits (RV64I).
-class shiftop<SDPatternOperator operator>
-    : PatFrags<(ops node:$val, node:$count),
-               [(operator node:$val, node:$count),
-                (operator node:$val, (and node:$count, immbottomwsizeset))]>;
-
-def : PatGprGpr<shiftop<shl>, SLL>;
-def : PatGprGpr<shiftop<srl>, SRL>;
-def : PatGprGpr<shiftop<sra>, SRA>;
-
-let Defs = [X2], Uses = [X2] in {
-def ADJCALLSTACKDOWN : Pseudo<(outs), (ins i32imm:$amt1, i32imm:$amt2),
-                              [(callseq_start timm:$amt1, timm:$amt2)]>;
-def ADJCALLSTACKUP   : Pseudo<(outs), (ins i32imm:$amt1, i32imm:$amt2),
-                              [(callseq_end timm:$amt1, timm:$amt2)]>;
-} // end Defs = [X2], Uses = [X2]
