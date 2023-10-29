@@ -48,6 +48,8 @@ void BogusMCCodeEmitter::encodeInstruction(const MCInst &MI,
   support::endian::write<uint32_t>(CB, Binary, llvm::endianness::big);
 }
 
-#if 0
+namespace llvm {
+  //#if 0
 #include "BogusGenCodeEmitter.inc"
-#endif
+  //#endif
+}
