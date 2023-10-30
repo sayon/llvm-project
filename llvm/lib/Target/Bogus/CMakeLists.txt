@@ -5,7 +5,6 @@ set(LLVM_TARGET_DEFINITIONS Bogus.td)
 tablegen(LLVM BogusGenRegisterInfo.inc -gen-register-info)
 tablegen(LLVM BogusGenInstrInfo.inc -gen-instr-info)
 tablegen(LLVM BogusGenCodeEmitter.inc -gen-emitter)
-# tablegen(LLVM BogusGenMCCodeEmitter.inc -gen-emitter)
 tablegen(LLVM BogusGenAsmWriter.inc -gen-asm-writer)
 tablegen(LLVM BogusGenDAGISel.inc -gen-dag-isel)
 tablegen(LLVM BogusGenCallingConv.inc -gen-callingconv)
@@ -24,6 +23,7 @@ add_llvm_target(BogusCodeGen
   BogusTargetObjectFile.cpp
   BogusISelDAGToDAG.cpp
   BogusTargetMachine.cpp
+  BogusMCInstLower.cpp
 
   LINK_COMPONENTS
   Analysis
@@ -38,6 +38,8 @@ add_llvm_target(BogusCodeGen
   Support
   Target
   TransformUtils
+  BogusDesc
+  BogusInfo
 
   ADD_TO_COMPONENT
   Bogus

@@ -14,6 +14,7 @@
 #include "BogusMCTargetDesc.h"
 #include "BogusInstPrinter.h"
 #include "BogusMCAsmInfo.h"
+#include "BogusMCCodeEmitter.h"
 #include "TargetInfo/BogusTargetInfo.h"
 #include "llvm/MC/MCELFStreamer.h"
 #include "llvm/MC/MCInstrAnalysis.h"
@@ -77,7 +78,7 @@ static MCAsmInfo *createBogusMCAsmInfo(const MCRegisterInfo &MRI,
 // }
 
 
-  extern "C" void LLVMInitializeBogusTargetMC() {
+extern "C" void LLVMInitializeBogusTargetMC() {
   for (Target *T : {&getTheBogusTarget()}) {
     // Register the MC asm info.
     TargetRegistry::RegisterMCAsmInfo(*T, createBogusMCAsmInfo);
@@ -93,5 +94,10 @@ static MCAsmInfo *createBogusMCAsmInfo(const MCRegisterInfo &MRI,
 
     // Register the MCInstPrinter.
     TargetRegistry::RegisterMCInstPrinter(*T, createBogusMCInstPrinter);
+
+    // Register the MCInstPrinter.
+    TargetRegistry::RegisterMCCodeEmitter(*T, createBogusMCCodeEmitter);
+
+    TargetRegistry::RegisterMCAsmBackend(*T, createBogusAsmBackend);
   }
 }
