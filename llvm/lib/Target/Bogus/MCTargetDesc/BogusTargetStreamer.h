@@ -25,7 +25,7 @@ class BogusTargetStreamer : public MCTargetStreamer {
   // BogusABI::ABI TargetABI = BogusABI::ABI_Unknown;
 
 public:
-  BogusTargetStreamer(MCStreamer &S);
+  BogusTargetStreamer(MCStreamer &S) : MCTargetStreamer(S) {}
   // void finish() override;
   // virtual void reset();
 
@@ -61,7 +61,7 @@ class BogusTargetAsmStreamer : public BogusTargetStreamer {
   //                           StringRef StringValue) override;
 
 public:
-  BogusTargetAsmStreamer(MCStreamer &S, formatted_raw_ostream &OS);
+  BogusTargetAsmStreamer(MCStreamer &S, formatted_raw_ostream &OS) : BogusTargetStreamer(S), OS(OS) {}
 
   // void emitDirectiveOptionPush() override;
   // void emitDirectiveOptionPop() override;

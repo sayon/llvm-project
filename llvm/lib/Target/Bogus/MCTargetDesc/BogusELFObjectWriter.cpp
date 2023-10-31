@@ -16,7 +16,7 @@ public:
       : MCELFObjectTargetWriter(Is64Bit, OSABI, ELF::EM_RISCV,
                                 /*HasRelocationAddend*/ true) {}
 
-  ~BogusELFObjectWriter() override = default;
+  ~BogusELFObjectWriter() override;
 
   // Return true if the given relocation must be with a symbol rather than
   // section plus offset.
@@ -33,6 +33,7 @@ protected:
 };
 } // namespace
 
+BogusELFObjectWriter::~BogusELFObjectWriter() = default;
 std::unique_ptr<MCObjectTargetWriter>
 llvm::createBogusELFObjectWriter(uint8_t OSABI, bool Is64Bit) {
   return std::make_unique<BogusELFObjectWriter>(OSABI, Is64Bit);

@@ -6,7 +6,6 @@
 
 using namespace llvm;
 
-// BogusTargetStreamer::BogusTargetStreamer(MCStreamer &S) : MCTargetStreamer(S) {}
 
 // void BogusTargetStreamer::finish() { finishAttributeSection(); }
 // void BogusTargetStreamer::reset() {}

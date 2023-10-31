@@ -12,15 +12,21 @@
 //===----------------------------------------------------------------------===//
 
 #include "BogusMCTargetDesc.h"
+#include "BogusBaseInfo.h"
+#include "BogusELFStreamer.h"
 #include "BogusInstPrinter.h"
 #include "BogusMCAsmInfo.h"
 #include "BogusMCCodeEmitter.h"
+#include "BogusTargetStreamer.h"
 #include "TargetInfo/BogusTargetInfo.h"
+#include "llvm/MC/MCAsmBackend.h"
 #include "llvm/MC/MCELFStreamer.h"
-#include "llvm/MC/MCInstrAnalysis.h"
 #include "llvm/MC/MCInstPrinter.h"
+#include "llvm/MC/MCInstrAnalysis.h"
 #include "llvm/MC/MCInstrInfo.h"
+#include "llvm/MC/MCObjectWriter.h"
 #include "llvm/MC/MCRegisterInfo.h"
+#include "llvm/MC/MCStreamer.h"
 #include "llvm/MC/MCSubtargetInfo.h"
 #include "llvm/MC/TargetRegistry.h"
 
@@ -77,7 +83,34 @@ static MCAsmInfo *createBogusMCAsmInfo(const MCRegisterInfo &MRI,
 //   return std::make_pair("no-mnemonic", BitsLeft);
 // }
 
+namespace {
+MCStreamer *createBogusELFStreamer(const Triple &T, MCContext &Context,
+                                   std::unique_ptr<MCAsmBackend> &&MAB,
+                                   std::unique_ptr<MCObjectWriter> &&MOW,
+                                   std::unique_ptr<MCCodeEmitter> &&MCE,
+                                   bool RelaxAll) {
+  return createBogusELFStreamer(Context, std::move(MAB), std::move(MOW),
+                                std::move(MCE), RelaxAll);
+}
+MCTargetStreamer *
+  createBogusObjectTargetStreamer(MCStreamer &S, const MCSubtargetInfo &STI) {
+  const Triple &TT = STI.getTargetTriple();
+  if (TT.isOSBinFormatELF())
+    return new BogusTargetELFStreamer(S, STI);
+  return nullptr;
+}
 
+static MCTargetStreamer *createBogusAsmTargetStreamer(MCStreamer &S,
+                                                      formatted_raw_ostream &OS,
+                                                      MCInstPrinter *InstPrint,
+                                                      bool isVerboseAsm) {
+  return new BogusTargetAsmStreamer(S, OS);
+}
+
+static MCTargetStreamer *createBogusNullTargetStreamer(MCStreamer &S) {
+  return new BogusTargetStreamer(S);
+}
+} // namespace
 extern "C" void LLVMInitializeBogusTargetMC() {
   for (Target *T : {&getTheBogusTarget()}) {
     // Register the MC asm info.
@@ -99,5 +132,14 @@ extern "C" void LLVMInitializeBogusTargetMC() {
     TargetRegistry::RegisterMCCodeEmitter(*T, createBogusMCCodeEmitter);
 
     TargetRegistry::RegisterMCAsmBackend(*T, createBogusAsmBackend);
+
+    TargetRegistry::RegisterELFStreamer(*T, createBogusELFStreamer);
+
+    TargetRegistry::RegisterObjectTargetStreamer(*T, createBogusObjectTargetStreamer);
+
+    TargetRegistry::RegisterAsmTargetStreamer(*T, createBogusAsmTargetStreamer);
+    // Register the null target streamer.
+    TargetRegistry::RegisterNullTargetStreamer(*T,
+                                               createBogusNullTargetStreamer);
   }
 }
