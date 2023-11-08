@@ -49,6 +49,7 @@ static MCInstrInfo *createBogusMCInstrInfo() {
 
 static MCRegisterInfo *createBogusMCRegisterInfo(const Triple &TT) {
   MCRegisterInfo *X = new MCRegisterInfo();
+  InitBogusMCRegisterInfo(X, Bogus::X1);
   return X;
 }
 
