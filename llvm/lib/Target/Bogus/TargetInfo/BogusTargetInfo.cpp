@@ -18,5 +18,5 @@ Target &llvm::getTheBogusTarget() {
 }
 
 extern "C" LLVM_EXTERNAL_VISIBILITY void LLVMInitializeBogusTargetInfo() {
-  RegisterTarget<Triple::bogus, false> X(getTheBogusTarget(), "bogus", "bogus descr", "Bogus");
+  RegisterTarget<Triple::bogus, false> X(getTheBogusTarget(), "bogus", "bogusdescr", "Bogus");
 }

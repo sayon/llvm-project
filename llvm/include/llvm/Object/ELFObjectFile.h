@@ -1228,6 +1228,10 @@ StringRef ELFObjectFile<ELFT>::getFileFormatName() const {
       return (IsLittleEndian ? "elf32-powerpcle" : "elf32-powerpc");
     case ELF::EM_RISCV:
       return "elf32-littleriscv";
+      // BEGIN BOGUS
+    case ELF::EM_BOGUS:
+      return "elf32-bogus";
+      // END BOGUS
     case ELF::EM_CSKY:
       return "elf32-csky";
     case ELF::EM_SPARC:
@@ -1254,6 +1258,7 @@ StringRef ELFObjectFile<ELFT>::getFileFormatName() const {
       return (IsLittleEndian ? "elf64-powerpcle" : "elf64-powerpc");
     case ELF::EM_RISCV:
       return "elf64-littleriscv";
+
     case ELF::EM_S390:
       return "elf64-s390";
     case ELF::EM_SPARCV9:
@@ -1321,6 +1326,15 @@ template <class ELFT> Triple::ArchType ELFObjectFile<ELFT>::getArch() const {
     default:
       report_fatal_error("Invalid ELFCLASS!");
     }
+    // BEGIN BOGUS
+  case ELF::EM_BOGUS:
+    switch (EF.getHeader().e_ident[ELF::EI_CLASS]) {
+    case ELF::ELFCLASS32:
+      return Triple::bogus;
+    default:
+      report_fatal_error("Invalid ELFCLASS!");
+    }
+    // END BOGUS
   case ELF::EM_S390:
     return Triple::systemz;
 

@@ -849,6 +849,9 @@ static Triple::ObjectFormatType getDefaultFormat(const Triple &T) {
   case Triple::renderscript64:
   case Triple::riscv32:
   case Triple::riscv64:
+    // BEGIN BOGUS
+  case Triple::bogus:
+    // END BOGUS
   case Triple::shave:
   case Triple::sparc:
   case Triple::sparcel:
@@ -885,10 +888,6 @@ static Triple::ObjectFormatType getDefaultFormat(const Triple &T) {
 
   case Triple::dxil:
     return Triple::DXContainer;
-    // BEGIN BOGUS
-  case Triple::bogus:
-    return Triple::ELF;
-    // END BOGUS
   }
   llvm_unreachable("unknown architecture");
 }
@@ -1434,6 +1433,9 @@ static unsigned getArchPointerBitWidth(llvm::Triple::ArchType Arch) {
   case llvm::Triple::r600:
   case llvm::Triple::renderscript32:
   case llvm::Triple::riscv32:
+    // BEGIN BOGUS
+  case llvm::Triple::bogus:
+    // END BOGUS
   case llvm::Triple::shave:
   case llvm::Triple::sparc:
   case llvm::Triple::sparcel:
@@ -1473,9 +1475,6 @@ static unsigned getArchPointerBitWidth(llvm::Triple::ArchType Arch) {
   case llvm::Triple::ve:
   case llvm::Triple::wasm64:
   case llvm::Triple::x86_64:
-    // BEGIN BOGUS
-  case llvm::Triple::bogus:
-    // END BOGUS
     return 64;
   }
   llvm_unreachable("Invalid architecture value");
@@ -1529,6 +1528,9 @@ Triple Triple::get32BitArchVariant() const {
   case Triple::r600:
   case Triple::renderscript32:
   case Triple::riscv32:
+    // BEGIN BOGUS
+  case Triple::bogus:
+    // END BOGUS
   case Triple::shave:
   case Triple::sparc:
   case Triple::sparcel:
@@ -1570,10 +1572,6 @@ Triple Triple::get32BitArchVariant() const {
     break;
   case Triple::wasm64:         T.setArch(Triple::wasm32);  break;
   case Triple::x86_64:         T.setArch(Triple::x86);     break;
-
-    // BEGIN BOGUS
-  case Triple::bogus: T.setArch(Triple::bogus); break;
-    // END BOGUS
   }
   return T;
 }

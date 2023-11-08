@@ -30,6 +30,5 @@ MCAsmBackend *llvm::createBogusAsmBackend(const Target &T,
                                           const MCRegisterInfo &MRI,
                                           const MCTargetOptions &Options) {
   const Triple &TT = STI.getTargetTriple();
-  //uint8_t OSABI = MCELFObjectTargetWriter::getOSABI(TT.getOS());
   return new BogusAsmBackend(STI);
 }

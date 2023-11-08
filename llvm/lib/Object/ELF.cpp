@@ -116,6 +116,15 @@ StringRef llvm::object::getELFRelocationTypeName(uint32_t Machine,
       break;
     }
     break;
+    // BEGIN BOGUS
+  case ELF::EM_BOGUS:
+    switch (Type) {
+#include "llvm/BinaryFormat/ELFRelocs/Bogus.def"
+    default:
+      break;
+    }
+    break;
+    // END BOGUS
   case ELF::EM_S390:
     switch (Type) {
 #include "llvm/BinaryFormat/ELFRelocs/SystemZ.def"
