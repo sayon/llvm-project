@@ -10,6 +10,7 @@ tablegen(LLVM BogusGenDAGISel.inc -gen-dag-isel)
 tablegen(LLVM BogusGenCallingConv.inc -gen-callingconv)
 tablegen(LLVM BogusGenSubtargetInfo.inc -gen-subtarget)
 tablegen(LLVM BogusGenMCPseudoLowering.inc -gen-pseudo-lowering)
+tablegen(LLVM BogusGenDisassemblerTables.inc -gen-disassembler)
 
 add_public_tablegen_target(BogusCommonTableGen)
 
@@ -40,6 +41,7 @@ add_llvm_target(BogusCodeGen
   TransformUtils
   BogusDesc
   BogusInfo
+  BogusDisassembler
 
   ADD_TO_COMPONENT
   Bogus
@@ -48,3 +50,4 @@ add_llvm_target(BogusCodeGen
 
 add_subdirectory(TargetInfo)
 add_subdirectory(MCTargetDesc)
+add_subdirectory(Disassembler)

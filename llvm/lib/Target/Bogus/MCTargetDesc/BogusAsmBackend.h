@@ -77,7 +77,7 @@ public:
                      bool &WasRelaxed) const override { return false; }
 
   bool writeNopData(raw_ostream &OS, uint64_t Count,
-                    const MCSubtargetInfo *STI) const override { return false; }
+                    const MCSubtargetInfo *STI) const override;
 
   unsigned getNumFixupKinds() const override { return 0; }
 };

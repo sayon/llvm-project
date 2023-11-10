@@ -32,3 +32,11 @@ MCAsmBackend *llvm::createBogusAsmBackend(const Target &T,
   const Triple &TT = STI.getTargetTriple();
   return new BogusAsmBackend(STI);
 }
+
+bool BogusAsmBackend::writeNopData(raw_ostream &OS, uint64_t Count,
+                  const MCSubtargetInfo *STI) const {
+    for (uint64_t i = 0 ; i < Count; ++i ) {
+      OS.write("\0", 1);
+    }
+    return true;
+  }

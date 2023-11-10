@@ -27,7 +27,7 @@ class ImmAsmOperand<string prefix, int width, string suffix> : AsmOperandClass {
 def simm12 : Operand<i32>, ImmLeaf<i32, [{return isInt<12>(Imm);}]> {
   let ParserMatchClass = ImmAsmOperand<"S", 12, "">;
   //let EncoderMethod = "getImmOpValue";
-  let DecoderMethod = "decodeSImmOperand<12>";
+  let DecoderMethod = "DecodeSImmOperand";
   let MCOperandPredicate = [{
     int64_t Imm;
     if (MCOp.evaluateAsConstantImm(Imm))
@@ -53,11 +53,11 @@ RWInstI<0b000, OPC_OP_IMM, (outs GPR:$rd), (ins GPR:$rs1, simm12:$imm12),
               "bogus-addi", "$rd, $rs1, $imm12">,
       Sched<[WriteIALU, ReadIALU]>  ;
 
-def ADD  :  RWInstR<0b0000000, 0b000, OPC_OP, (outs GPR:$rd), (ins GPR:$rs1, GPR:$rs2),
+def ADD  :  RWInstR<0b0000000, 0b011, OPC_OP, (outs GPR:$rd), (ins GPR:$rs1, GPR:$rs2),
               "bogus-add", "$rd, $rs1, $rs2"> , Sched<[WriteIALU, ReadIALU, ReadIALU]>;
 
 /* Procedure calling instructions */
-def JALR : RWInstI<0b000, OPC_JALR, (outs GPR:$rd),
+def JALR : RWInstI<0b001, OPC_JALR, (outs GPR:$rd),
                    (ins GPR:$rs1, i32imm:$imm12),
                    "bogus-jalr", "$rd, ${imm12}(${rs1})">,
            Sched<[WriteJalr, ReadJalr]>;

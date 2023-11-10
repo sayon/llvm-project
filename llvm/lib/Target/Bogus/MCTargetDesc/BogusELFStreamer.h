@@ -60,7 +60,7 @@ public:
   // void emitDirectiveOptionNoRelax() override;
   // void emitDirectiveVariantCC(MCSymbol &Symbol) override;
 
-  void finish() override {}
+  void finish() override {} //
 };
 
 MCELFStreamer *createBogusELFStreamer(MCContext &C,

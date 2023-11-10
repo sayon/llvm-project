@@ -13,7 +13,7 @@ namespace {
 class BogusELFObjectWriter : public MCELFObjectTargetWriter {
 public:
   BogusELFObjectWriter(uint8_t OSABI, bool Is64Bit)
-      : MCELFObjectTargetWriter(Is64Bit, OSABI, ELF::EM_RISCV,
+      : MCELFObjectTargetWriter(Is64Bit, OSABI, ELF::EM_BOGUS,
                                 /*HasRelocationAddend*/ true) {}
 
   ~BogusELFObjectWriter() override;
@@ -28,7 +28,7 @@ public:
 protected:
   unsigned getRelocType(MCContext &Ctx, const MCValue &Target,
                         const MCFixup &Fixup, bool IsPCRel) const override {
-    return ELF::R_RISCV_NONE;
+    return ELF::R_BOGUS_NONE;
   }
 };
 } // namespace
