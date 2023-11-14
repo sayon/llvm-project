@@ -9,6 +9,6 @@ namespace llvm {
 
   // Declare functions to create passes here!
 
-} // end namespace llvm;
+} // namespace llvm
 
 #endif // end LLVM_LIB_TARGET_Bogus_Bogus_H

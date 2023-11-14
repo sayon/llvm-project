@@ -10,11 +10,11 @@ namespace BogusII {
 enum {
   InstFormatPseudo = 0,
   InstFormatR = 1,
-  InstFormatI = 2,
-  InstFormatU = 3,
+  InstFormatRR = 2,
+  InstFormatI = 3,
   InstFormatOther = 4,
 
-  InstFormatMask = 31
+  InstFormatMask = 7
 };
 
 } // namespace BogusII
@@ -22,15 +22,9 @@ enum {
 namespace BogusOp {
 enum OperandType : unsigned {
   OPERAND_FIRST_BOGUS_IMM = MCOI::OPERAND_FIRST_TARGET,
-  OPERAND_UIMM4 = OPERAND_FIRST_BOGUS_IMM,
-  OPERAND_UIMM5,
-  OPERAND_UIMM12,
-  OPERAND_SIMM12,
-  OPERAND_SIMM13_LSB0,
-  OPERAND_UIMM20,
-  OPERAND_SIMM21_LSB0,
-  OPERAND_UIMMLOG2WSIZE,
-  OPERAND_LAST_BOGUS_IMM = OPERAND_UIMMLOG2WSIZE
+  OPERAND_UIMM5 = OPERAND_FIRST_BOGUS_IMM,
+  OPERAND_CUSTOM_SIMM12,
+  OPERAND_LAST_BOGUS_IMM = OPERAND_CUSTOM_SIMM12
 };
 } // namespace BogusOp
 

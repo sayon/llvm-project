@@ -18,6 +18,6 @@ public:
 protected:
   const BogusSubtarget &Subtarget;
 };
-}
+} // namespace llvm
 
 #endif // end LLVM_LIB_TARGET_Bogus_BogusINSTRINFO_H

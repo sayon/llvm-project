@@ -1,84 +1,76 @@
-class InstFormat<bits<5> val> {
-  bits<5> Value = val;
+class InstFormat<bits<3> val> {
+  bits<3> Value = val;
 }
 def InstFormatPseudo : InstFormat<0>;
 def InstFormatR      : InstFormat<1>;
-def InstFormatI      : InstFormat<2>;
-def InstFormatU      : InstFormat<3>;
+def InstFormatRR      : InstFormat<2>;
+def InstFormatI      : InstFormat<3>;
 
-class BogusOpcode<bits<7> val> {bits<7> Value = val;}
-def OPC_OP_IMM    : BogusOpcode<0b0010011>;
-def OPC_OP        : BogusOpcode<0b0110011>;
-def OPC_JALR      : BogusOpcode< !add(0b1100000, !shl(0b11, 1)) >;
+class BogusOpcode<bits<3> val> {bits<3> Value = val;}
 
+def OPC_OP_IMM    : BogusOpcode<0b001>;
+def OPC_OP_ADD    : BogusOpcode<0b010>;
+def OPC_OP_RET : BogusOpcode< !add(0b101, !shl(0b1, 1)) >;
 
-class RWInst<dag outs, dag ins, string opcodestr, string argstr,
-             list<dag> pattern, InstFormat format>
-    : Instruction {
-  field bits<32> Inst;
-  field bits<32> SoftFail = 0;
-  let Size = 4;
-
-  bits<7> Opcode = 0;
-
-  let Inst{6-0} = Opcode;
+class BogusInstBase : Instruction {
 
   let Namespace = "Bogus";
-
+  bits<32> Inst;
+}
+class BogusInst<InstFormat format, dag outs, dag ins> : BogusInstBase
+{
   dag OutOperandList = outs;
   dag InOperandList = ins;
-  let AsmString = opcodestr # "\t" # argstr;
-  let Pattern = pattern;
 
-  let TSFlags{4-0} =  format.Value;
+  let TSFlags{2-0} =  format.Value;
+
 }
 
 // Pseudo instructions
-class Pseudo<dag outs, dag ins, list<dag> pattern, string opcodestr = "",
-             string argstr = "">
-    : RWInst<outs, ins, opcodestr, argstr, pattern, InstFormatPseudo>,
+class Pseudo<dag outs, dag ins, list<dag> pattern>
+    : BogusInst<InstFormatPseudo, outs, ins>,
       Sched<[]> {
+  let Pattern = pattern;
   let isPseudo = 1;
   let isCodeGenOnly = 1;
 }
 
-// Formats
-class RWInstR<bits<7> funct7, bits<3> funct3, BogusOpcode opcode, dag outs,
+class NonPseudo<BogusOpcode opcode, InstFormat format, dag outs,
               dag ins, string opcodestr, string argstr>
-    : RWInst<outs, ins, opcodestr, argstr, [], InstFormatR> {
-  bits<5> rs2;
-  bits<5> rs1;
-  bits<5> rd;
+    : BogusInst<format, outs, ins>{
+  field bits<32> Inst;
+  field bits<32> SoftFail = 0;
+  let Size = 4;
+  field BogusOpcode Opcode = opcode;
+  let Inst{2-0} = Opcode.Value;
 
-  let Inst{31-25} = funct7;
-  let Inst{24-20} = rs2;
-  let Inst{19-15} = rs1;
-  let Inst{14-12} = funct3;
-  let Inst{11-7} = rd;
-  let Opcode = opcode.Value;
+  let AsmString = "bogus-" # opcodestr # "\t" # argstr;
 }
 
-class RWInstI<bits<3> funct3, BogusOpcode opcode, dag outs, dag ins,
-              string opcodestr, string argstr>
-    : RWInst<outs, ins, opcodestr, argstr, [], InstFormatI> {
-  bits<12> imm12;
-  bits<5> rs1;
-  bits<5> rd;
-
-  let Inst{31-20} = imm12;
-  let Inst{19-15} = rs1;
-  let Inst{14-12} = funct3;
-  let Inst{11-7} = rd;
-  let Opcode = opcode.Value;
+// Formats
+class BogusInstR<BogusOpcode opcode, dag outs,
+              dag ins, string opcodestr>
+    : NonPseudo<opcode, InstFormatR, outs, ins, opcodestr, "${src0}">
+{
+field bits<5> src0;
+let Inst{3-7} = src0;
 }
 
-class RWInstU<BogusOpcode opcode, dag outs, dag ins, string opcodestr,
-              string argstr>
-    : RWInst<outs, ins, opcodestr, argstr, [], InstFormatU> {
-  bits<20> imm20;
-  bits<5> rd;
-
-  let Inst{31-12} = imm20;
-  let Inst{11-7} = rd;
-  let Opcode = opcode.Value;
+class BogusInstRR<BogusOpcode opcode, dag outs,
+              dag ins, string opcodestr>
+    : NonPseudo<opcode, InstFormatR, outs, ins, opcodestr, "${src0}, ${src1}, ${dst0}">
+{
+field bits<5> src0;
+field bits<5> src1;
+field bits<5> dst0;
+let Inst{3-7} = src0;
+let Inst{8-12} = src1;
+let Inst{13-17} = dst0;
+}
+class BogusInstI<BogusOpcode opcode, dag outs,
+              dag ins, string opcodestr>
+    : NonPseudo<opcode, InstFormatI, outs, ins, opcodestr, "${imm12}">
+{
+field bits<12> imm12;
+let Inst{3-14} = imm12;
 }

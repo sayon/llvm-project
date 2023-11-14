@@ -1,7 +1,7 @@
 #pragma once
 
-#include "MCTargetDesc/BogusBaseInfo.h"
-#include "MCTargetDesc/BogusMCTargetDesc.h"
+#include "BogusBaseInfo.h"
+#include "BogusMCTargetDesc.h"
 #include "llvm/MC/MCAsmBackend.h"
 #include "llvm/MC/MCFixupKindInfo.h"
 #include "llvm/MC/MCSubtargetInfo.h"
