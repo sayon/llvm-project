@@ -48,17 +48,17 @@ static bool readInstruction32(ArrayRef<uint8_t> Bytes, uint64_t Address,
     Size = 0;
     return false;
   }
-  // Encoded as a little-endian 32-bit word in the stream.
-  Insn =
-      (Bytes[0] << 0) | (Bytes[1] << 8) | (Bytes[2] << 16) | (Bytes[3] << 24);
-      Size = 4;
+  // Encoded as a big-endian 32-bit word in the stream.
+  Insn = support::endian::read32be(Bytes.data());
+  Size = 4;
   return true;
 }
-
+/*
 static unsigned getReg(const MCDisassembler *D, unsigned RC, unsigned RegNo) {
   const MCRegisterInfo *RegInfo = D->getContext().getRegisterInfo();
   return *(RegInfo->getRegClass(RC).begin() + RegNo);
 }
+*/
 
 // static DecodeStatus DecodeGRRegsRegisterClass(MCInst &Inst, unsigned RegNo,
 //                                               uint64_t Address,
@@ -173,7 +173,7 @@ static DecodeStatus DecodeGPRRegisterClass(MCInst &Inst, unsigned RegNo,
                                            const MCDisassembler *Decoder) {
   if (RegNo > 32)
     return MCDisassembler::Fail;
-  unsigned Reg = getReg(Decoder, Bogus::GPRRegClassID, RegNo);
+  MCRegister Reg = Bogus::X0 + RegNo;
   Inst.addOperand(MCOperand::createReg(Reg));
   return MCDisassembler::Success;
 }

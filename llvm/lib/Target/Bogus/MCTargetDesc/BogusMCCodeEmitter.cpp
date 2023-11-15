@@ -67,6 +67,16 @@ BogusMCCodeEmitter::getMachineOpValue(const MCInst &MI, const MCOperand &MO,
   llvm_unreachable("Unhandled expression!");
   return 0;
 }
+
+unsigned
+BogusMCCodeEmitter::getImmOpValue(const MCInst &MI, unsigned OpNo,
+                                  SmallVectorImpl<MCFixup> &Fixups,
+                                  const MCSubtargetInfo &STI) const {
+  const MCOperand &MO = MI.getOperand(OpNo);
+  assert(MO.isImm());
+  return MO.getImm();
+}
+
 namespace llvm {
 #include "BogusGenCodeEmitter.inc"
 } // namespace llvm

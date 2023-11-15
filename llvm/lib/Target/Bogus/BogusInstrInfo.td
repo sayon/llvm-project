@@ -39,7 +39,7 @@ def simm12 : Operand<i32>, ImmLeaf<i32, [{return isInt<12>(Imm);}]> {
   let OperandNamespace = "BogusOp";
 }
 
-//===----------------------------------------------------------------------===//
+//------------------------------------------------------===//
 // Instruction Formats
 //===----------------------------------------------------------------------===//
 
@@ -48,25 +48,52 @@ include "BogusInstrFormats.td"
 //===----------------------------------------------------------------------===//
 // Instructions
 //===----------------------------------------------------------------------===//
+class BogusInstNoOp<BogusOpcode opcode, string opcodestr>
+    : NonPseudo<opcode, InstFormatR,  (outs), (ins), opcodestr, ""> {
+  let Inst{31-0} = 1;
+}
 
-def IMM :
-BogusInstI<OPC_OP_IMM, (outs GPR:$src0), (ins simm12:$imm12), "bogus-imm">,
-      Sched<[WriteIALU, ReadIALU]>  ;
+class BogusInstR<BogusOpcode opcode, string opcodestr>
+    : NonPseudo<opcode, InstFormatR,  (outs), (ins GPR:$src0), opcodestr, "$src0"> {
+  bits<5> src0;
+  let Inst{7-3} = src0;
+}
 
-def ADD  :  BogusInstRR<OPC_OP_ADD, (outs GPR:$dst0), (ins GPR:$src0, GPR:$src1),
-              "bogus-add"> , Sched<[WriteIALU, ReadIALU, ReadIALU]>;
+class BogusInstRR<BogusOpcode opcode, string opcodestr>
+    : NonPseudo<opcode, InstFormatI, (outs GPR:$dst0), (ins GPR:$src0, GPR:$src1),
+                opcodestr, "$src0, $src1, $dst0"> {
+  bits<5> dst0;
+  bits<5> src0;
+  bits<5> src1;
+  let Inst{17-13} = dst0;
+  let Inst{12-8} = src1;
+  let Inst{7-3} = src0;
+  let Inst{31-18} = 0;
+}
+
+class BogusInstI<BogusOpcode opcode, string opcodestr>
+    : NonPseudo<opcode, InstFormatI, (outs GPR:$src0), (ins simm12:$imm12),
+                opcodestr, "$src0, $imm12"> {
+  bits<5> src0;
+  bits<12> imm12;
+  let Inst{14-3} = imm12;
+  let Inst{19-15} = src0;
+}
+
+def IMM : BogusInstI<OPC_OP_IMM, "imm">;
+
+def ADD : BogusInstRR<OPC_OP_ADD, "add">;
 
 /* Procedure calling instructions */
-def RET : BogusInstR<OPC_OP_RET, (outs), (ins GPR:$src0),  "bogus-ret">,
-           Sched<[]>;
+def RET : BogusInstNoOp<OPC_OP_RET, "ret">;
 
 //===----------------------------------------------------------------------===//
 // Assembler Pseudo Instructions (User-Level ISA)
 //===----------------------------------------------------------------------===//
 
 let isReturn = 1, isBarrier = 1, isTerminator = 1 in
-def PseudoRET : Pseudo<(outs), (ins GPR:$src0), [(bogus_ret)]>,
-                PseudoInstExpansion<(RET $src0)>;
+def PseudoRET : Pseudo<(outs), (ins variable_ops), [(bogus_ret)]>,
+                PseudoInstExpansion<(RET)>;
 
 //===----------------------------------------------------------------------===//
 // Pseudo-instructions and codegen patterns
